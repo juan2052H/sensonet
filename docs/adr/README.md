@@ -1,0 +1,10 @@
+# Decisiones de arquitectura (ADR)
+
+- [ADR 0001: Protocolo: MQTT](0001-mqtt.md)
+- [ADR 0002: Broker: Eclipse Mosquitto con TLS y ACL](0002-mosquitto.md)
+- [ADR 0003: Backend: Spring Boot](0003-spring-boot.md)
+- [ADR 0004: Base de datos: PostgreSQL + TimescaleDB (con alternativa sin TimescaleDB)](0004-timescaledb.md)
+- [ADR 0005: Tiempo real: WebSocket con STOMP](0005-websocket-stomp.md)
+- [ADR 0006: Frontend: React + TypeScript + Vite](0006-react-vite.md)
+- [ADR 0007: Firmware: sketch de Arduino IDE (no PlatformIO) y QoS de PubSubClient](0007-firmware-arduino-ide.md)
+- [ADR 0008: Deduplicación por (nodo, ts, seq)](0008-deduplicacion.md)

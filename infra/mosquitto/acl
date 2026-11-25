@@ -1,0 +1,17 @@
+# ACL de SensoNet
+# El backend lee la telemetría/estado/confirmaciones de todos los nodos
+# y es el ÚNICO que puede publicar comandos y configuración.
+user backend
+topic read  sensonet/v1/+/telemetry
+topic read  sensonet/v1/+/status
+topic read  sensonet/v1/+/cmd/ack
+topic write sensonet/v1/+/cmd/relay
+topic write sensonet/v1/+/config
+
+# Cada nodo (usuario = código del nodo, %u) solo accede a SUS tópicos.
+# Si alguien roba las credenciales de nodo-sala no puede suplantar a otro nodo.
+pattern write sensonet/v1/%u/telemetry
+pattern write sensonet/v1/%u/status
+pattern write sensonet/v1/%u/cmd/ack
+pattern read  sensonet/v1/%u/cmd/relay
+pattern read  sensonet/v1/%u/config

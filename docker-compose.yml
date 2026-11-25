@@ -1,0 +1,99 @@
+# SensoNet - entorno local completo
+#   cp .env.example .env
+#   docker compose up --build                  # broker + base de datos + backend + dashboard
+#   docker compose --profile demo up --build   # ... + nodos simulados
+name: sensonet
+
+services:
+  certs:
+    image: alpine:3.20
+    command: ["sh", "/scripts/gen-certs.sh", "/certs", "${MQTT_EXTRA_SAN:-}"]
+    volumes:
+      - ./infra/certs:/scripts:ro
+      - ./infra/certs/generated:/certs
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    entrypoint: ["sh", "/mosquitto/config/entrypoint.sh"]
+    environment:
+      MQTT_BACKEND_PASSWORD: ${MQTT_BACKEND_PASSWORD:?Copia .env.example a .env}
+      MQTT_NODES: ${MQTT_NODES:?Copia .env.example a .env}
+    ports: ["8883:8883"]
+    volumes:
+      - ./infra/mosquitto:/mosquitto/config:ro
+      - ./infra/certs/generated:/mosquitto/certs:ro
+      - mqttdata:/mosquitto/data
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  db:
+    image: timescale/timescaledb:latest-pg16
+    environment:
+      POSTGRES_DB: sensonet
+      POSTGRES_USER: sensonet
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Copia .env.example a .env}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["dbdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sensonet -d sensonet"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sensonet
+      SPRING_DATASOURCE_USERNAME: sensonet
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SENSONET_DB_FLAVOR: ${SENSONET_DB_FLAVOR:-timescale}
+      SENSONET_JWT_SECRET: ${JWT_SECRET:?Copia .env.example a .env}
+      SENSONET_MQTT_URL: ssl://mosquitto:8883
+      SENSONET_MQTT_USERNAME: backend
+      SENSONET_MQTT_PASSWORD: ${MQTT_BACKEND_PASSWORD}
+      SENSONET_MQTT_CA_FILE: /certs/ca.crt
+      SENSONET_SEED_ADMIN_EMAIL: ${SENSONET_ADMIN_EMAIL:-}
+      SENSONET_SEED_ADMIN_PASSWORD: ${SENSONET_ADMIN_PASSWORD:-}
+      SENSONET_SEED_VIEWER_EMAIL: ${SENSONET_VIEWER_EMAIL:-}
+      SENSONET_SEED_VIEWER_PASSWORD: ${SENSONET_VIEWER_PASSWORD:-}
+      SENSONET_TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      SENSONET_TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      SENSONET_CORS_ORIGINS: http://localhost:${FRONTEND_PORT:-5173}
+    volumes:
+      - ./infra/certs/generated:/certs:ro
+    ports: ["${BACKEND_PORT:-8080}:8080"]
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    depends_on: [backend]
+    ports: ["${FRONTEND_PORT:-5173}:80"]
+    restart: unless-stopped
+
+  simulator:
+    build: ./simulator
+    profiles: ["demo"]
+    depends_on: [mosquitto]
+    environment:
+      MQTT_HOST: mosquitto
+      MQTT_PORT: "8883"
+      MQTT_CA_FILE: /certs/ca.crt
+      MQTT_NODES: ${MQTT_NODES}
+      SIM_ESCENARIO: ${SIM_ESCENARIO:-normal}
+      SIM_NODOS: ${SIM_NODOS:-sim-sala,sim-lab,sim-bodega}
+      SIM_INTERVALO: ${SIM_INTERVALO:-10}
+    volumes:
+      - ./infra/certs/generated:/certs:ro
+    restart: unless-stopped
+
+volumes:
+  dbdata: {}
+  mqttdata: {}

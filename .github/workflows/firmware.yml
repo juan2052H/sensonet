@@ -1,0 +1,48 @@
+name: firmware
+
+on:
+  push:
+    branches: [main]
+    paths: ["firmware/**", ".github/workflows/firmware.yml"]
+  pull_request:
+    paths: ["firmware/**", ".github/workflows/firmware.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  native-tests:
+    name: Pruebas nativas (buffer, JSON, validación)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh firmware/test/run_tests.sh
+
+  compile:
+    name: Compilar para ESP32 (${{ matrix.sensor }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sensor: [BME280, SHT31]
+    defaults:
+      run:
+        working-directory: firmware
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.arduino15
+            ~/Arduino/libraries
+          key: arduino-esp32-${{ hashFiles('firmware/compile.sh') }}
+      - name: Instalar arduino-cli (binario oficial verificado)
+        run: |
+          V=$(grep '^CLI_VERSION=' compile.sh | cut -d= -f2)
+          F="arduino-cli_${V}_Linux_64bit.tar.gz"
+          curl -fsSL -o "/tmp/$F" "https://github.com/arduino/arduino-cli/releases/download/v${V}/$F"
+          curl -fsSL -o /tmp/checksums.txt "https://github.com/arduino/arduino-cli/releases/download/v${V}/${V}-checksums.txt"
+          (cd /tmp && grep " $F\$" checksums.txt | sha256sum -c -)
+          mkdir -p "$HOME/bin" && tar -xzf "/tmp/$F" -C "$HOME/bin" arduino-cli
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+      - name: Compilar
+        run: SENSOR=${{ matrix.sensor }} sh compile.sh

@@ -1,0 +1,88 @@
+server:
+  port: 8080
+  shutdown: graceful
+  # Detrás de nginx: usa X-Forwarded-For de proxies internos (10.x, 172.16-31.x, 192.168.x)
+  # para que el límite de peticiones se aplique por cliente y no por proxy.
+  forward-headers-strategy: native
+
+spring:
+  application:
+    name: sensonet-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/sensonet}
+    username: ${SPRING_DATASOURCE_USERNAME:sensonet}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    locations: classpath:db/migration/common,classpath:db/migration/${sensonet.db.flavor}
+  mvc:
+    problemdetails:
+      enabled: true
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+sensonet:
+  db:
+    # timescale | postgres  (ver docs/adr/0004-timescaledb.md)
+    flavor: ${SENSONET_DB_FLAVOR:timescale}
+    raw-retention: 30d
+  jwt:
+    secret: ${SENSONET_JWT_SECRET:}
+    ttl: 8h
+  cors:
+    allowed-origins: ${SENSONET_CORS_ORIGINS:http://localhost:5173}
+  mqtt:
+    enabled: ${SENSONET_MQTT_ENABLED:true}
+    url: ${SENSONET_MQTT_URL:ssl://localhost:8883}
+    username: ${SENSONET_MQTT_USERNAME:backend}
+    password: ${SENSONET_MQTT_PASSWORD:}
+    ca-file: ${SENSONET_MQTT_CA_FILE:}
+    client-id: ${SENSONET_MQTT_CLIENT_ID:sensonet-backend}
+    max-payload-bytes: 4096
+  ingestion:
+    auto-register-nodes: true
+    # Lecturas que llegan con más retraso que esto se marcan como "rellenadas desde el buffer"
+    # (las lecturas en vivo llegan con < 1 s de retraso)
+    backfill-threshold: 20s
+    max-age: 2d
+    max-future: 5m
+  nodes:
+    stale-after: 60s
+  commands:
+    ack-timeout: 10s
+  telegram:
+    bot-token: ${SENSONET_TELEGRAM_BOT_TOKEN:}
+    chat-id: ${SENSONET_TELEGRAM_CHAT_ID:}
+    min-interval: 60s
+  rate-limit:
+    login-per-minute: 10
+    api-per-minute: 600
+  seed:
+    admin-email: ${SENSONET_SEED_ADMIN_EMAIL:}
+    admin-password: ${SENSONET_SEED_ADMIN_PASSWORD:}
+    viewer-email: ${SENSONET_SEED_VIEWER_EMAIL:}
+    viewer-password: ${SENSONET_SEED_VIEWER_PASSWORD:}
+    demo-rules: true
