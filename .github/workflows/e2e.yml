@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Preparar .env de CI (secretos aleatorios, solo para esta ejecución)
         run: |
           cp .env.example .env
@@ -36,7 +36,7 @@ jobs:
           done
           docker compose logs backend --tail 100
           exit 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - name: Playwright
@@ -52,7 +52,7 @@ jobs:
       - name: Logs si falla
         if: failure()
         run: docker compose --profile demo logs --tail 200
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
