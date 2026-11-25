@@ -1,6 +1,6 @@
 package com.sensonet.ingestion;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.sensonet.commands.CommandService;
 import com.sensonet.devices.NodeService;
 import com.sensonet.devices.StatusPayload;

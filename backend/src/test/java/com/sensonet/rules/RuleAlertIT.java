@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.sensonet.AbstractIT;
 import java.time.Duration;
 import java.time.Instant;
@@ -67,7 +67,7 @@ class RuleAlertIT extends AbstractIT {
         // reconocer
         mvc.perform(post("/api/alerts/" + alertId + "/ack").header("Authorization", admin))
                 .andExpect(status().isOk());
-        assertThat(openAlertsFor(admin, nodeId).get(0).get("ackedBy").asText()).isEqualTo(ADMIN);
+        assertThat(openAlertsFor(admin, nodeId).get(0).get("ackedBy").asString()).isEqualTo(ADMIN);
 
         // baja de 28 °C → se cierra
         sendTelemetry(code, telemetry(seq++, start.plusSeconds(420), 27.0, 50, null));

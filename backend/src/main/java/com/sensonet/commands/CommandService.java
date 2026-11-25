@@ -1,8 +1,8 @@
 package com.sensonet.commands;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.sensonet.common.NotFoundException;
 import com.sensonet.config.SensonetProperties;
 import com.sensonet.devices.Node;
@@ -145,7 +145,7 @@ public class CommandService {
     private String toJson(Object o) {
         try {
             return mapper.writeValueAsString(o);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException(e);
         }
     }

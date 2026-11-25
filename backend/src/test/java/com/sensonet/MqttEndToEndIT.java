@@ -68,7 +68,7 @@ class MqttEndToEndIT extends AbstractIT {
 
         node.subscribe("sensonet/v1/" + code + "/cmd/relay", 1, (topic, m) -> {
             var cmd = mapper.readTree(m.getPayload());
-            String ack = "{\"id\":\"" + cmd.get("id").asText() + "\",\"ok\":true,\"relay\":" + cmd.get("on").asBoolean() + "}";
+            String ack = "{\"id\":\"" + cmd.get("id").asString() + "\",\"ok\":true,\"relay\":" + cmd.get("on").asBoolean() + "}";
             // publicar desde otro hilo: Paho no permite publicar QoS 1 dentro del callback
             new Thread(() -> {
                 try {
@@ -84,12 +84,12 @@ class MqttEndToEndIT extends AbstractIT {
         String body = mvc.perform(post("/api/nodes/" + id + "/commands/relay").header("Authorization", admin)
                         .contentType(MediaType.APPLICATION_JSON).content("{\"on\":true}"))
                 .andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString();
-        String cmdId = json(body).get("id").asText();
-        assertThat(json(body).get("status").asText()).isIn("PENDING", "CONFIRMED");
+        String cmdId = json(body).get("id").asString();
+        assertThat(json(body).get("status").asString()).isIn("PENDING", "CONFIRMED");
 
         await().atMost(Duration.ofSeconds(8)).until(() -> json(mvc.perform(get("/api/commands/" + cmdId)
                         .header("Authorization", admin)).andReturn().getResponse().getContentAsString())
-                .get("status").asText().equals("CONFIRMED"));
+                .get("status").asString().equals("CONFIRMED"));
         assertThat(jdbc.queryForObject("SELECT relay_on FROM nodes WHERE id = ?", Boolean.class, id)).isTrue();
     }
 
