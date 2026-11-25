@@ -15,7 +15,7 @@ jobs:
     name: Pruebas nativas (buffer, JSON, validación)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: sh firmware/test/run_tests.sh
 
   compile:
@@ -28,8 +28,8 @@ jobs:
       run:
         working-directory: firmware
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.arduino15
