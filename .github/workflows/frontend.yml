@@ -32,7 +32,7 @@ jobs:
         env:
           # URL pública del backend de la demo (variable del repositorio). Vacía = mismo origen.
           VITE_API_URL: ${{ vars.SENSONET_API_URL }}
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: frontend/dist
