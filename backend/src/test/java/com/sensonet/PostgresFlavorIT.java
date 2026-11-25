@@ -18,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /** Alternativa para proveedores sin TimescaleDB (ADR 0004): PostgreSQL simple con BRIN y date_bin. */
 @SpringBootTest
 class PostgresFlavorIT {
 
-    static final PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine");
+    static final PostgreSQLContainer PG = new PostgreSQLContainer("postgres:16-alpine");
 
     static {
         PG.start();

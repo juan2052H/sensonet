@@ -1,7 +1,7 @@
 package com.sensonet.ingestion;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.sensonet.config.SensonetProperties;
 import com.sensonet.devices.Node;
 import com.sensonet.devices.NodeService;
@@ -77,7 +77,7 @@ public class IngestionService {
         TelemetryPayload p;
         try {
             p = mapper.readValue(payload, TelemetryPayload.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             return reject(nodeCode, "JSON inválido", raw);
         } catch (Exception e) {
             return reject(nodeCode, "JSON ilegible", raw);

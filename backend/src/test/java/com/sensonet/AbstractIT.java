@@ -3,14 +3,14 @@ package com.sensonet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.sensonet.ingestion.MqttMessageRouter;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +18,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
@@ -35,7 +35,7 @@ public abstract class AbstractIT {
     public static final String VIEWER = "viewer@test.local";
     public static final String PASSWORD = "clave-de-prueba-123";
 
-    static final PostgreSQLContainer<?> DB = new PostgreSQLContainer<>(
+    static final PostgreSQLContainer DB = new PostgreSQLContainer(
             DockerImageName.parse("timescale/timescaledb:latest-pg16").asCompatibleSubstituteFor("postgres"));
 
     static final GenericContainer<?> MQTT = new GenericContainer<>("eclipse-mosquitto:2")
@@ -83,7 +83,7 @@ public abstract class AbstractIT {
                         .content("{\"email\":\"" + email + "\",\"password\":\"" + PASSWORD + "\"}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        return "Bearer " + mapper.readTree(body).get("token").asText();
+        return "Bearer " + mapper.readTree(body).get("token").asString();
     }
 
     protected JsonNode json(String s) throws Exception {

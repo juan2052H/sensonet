@@ -24,9 +24,8 @@ spring:
     problemdetails:
       enabled: true
   jackson:
+    # Jackson 3 ya serializa las fechas como texto ISO-8601 por defecto
     default-property-inclusion: non_null
-    serialization:
-      write-dates-as-timestamps: false
 
 management:
   endpoints:

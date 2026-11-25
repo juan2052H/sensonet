@@ -1,6 +1,6 @@
 package com.sensonet.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.sensonet.common.ApiExceptionHandler;
 import com.sensonet.config.SensonetProperties;
 import jakarta.servlet.http.HttpServletResponse;

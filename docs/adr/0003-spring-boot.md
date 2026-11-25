@@ -3,7 +3,7 @@
 Estado: aceptada · Fecha: 2026-11-24
 
 ## Decisión
-Spring Boot 3.5 con Java 21. Paho para MQTT, Spring Data JPA para las entidades, `JdbcTemplate` para la
+Spring Boot 4.2 con Java 25 (LTS); ver ADR 0009. Paho para MQTT, Spring Data JPA para las entidades, `JdbcTemplate` para la
 serie de tiempo, STOMP para el tiempo real, el servidor de recursos OAuth2 de Spring Security para validar
 JWT y springdoc para OpenAPI.
 

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.sensonet.AbstractIT;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -61,7 +61,7 @@ class IngestionIT extends AbstractIT {
         JsonNode node = json(mvc.perform(get("/api/nodes/" + nodeId(code)).header("Authorization", auth))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
         assertThat(node.get("online").asBoolean()).isTrue();
-        assertThat(node.get("firmware").asText()).isEqualTo("1.0.0");
+        assertThat(node.get("firmware").asString()).isEqualTo("1.0.0");
         assertThat(node.get("relayOn").asBoolean()).isTrue();
         assertThat(node.get("buffered").asInt()).isEqualTo(3);
 

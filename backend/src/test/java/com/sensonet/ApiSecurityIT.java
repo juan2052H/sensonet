@@ -105,7 +105,7 @@ class ApiSecurityIT extends AbstractIT {
         mvc.perform(delete("/api/users/" + id).header("Authorization", admin)).andExpect(status().isNoContent());
         String me = mvc.perform(get("/api/auth/me").header("Authorization", admin))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        assertThat(json(me).get("role").asText()).isEqualTo("ADMIN");
+        assertThat(json(me).get("role").asString()).isEqualTo("ADMIN");
     }
 
     @Test

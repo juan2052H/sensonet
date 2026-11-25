@@ -103,7 +103,7 @@ Resumen del [modelo de amenazas](docs/SECURITY.md):
 
 ```
 sensonet/
-├─ backend/        Spring Boot 3.5 (Java 21): ingesta MQTT, reglas, API REST, WebSocket
+├─ backend/        Spring Boot 4.2 (Java 25): ingesta MQTT, reglas, API REST, WebSocket
 ├─ frontend/       React 19 + TypeScript + Vite + Tailwind + ECharts
 ├─ simulator/      Nodos virtuales en Python (paho-mqtt, MQTT 5)
 ├─ firmware/       Sketch de Arduino IDE para ESP32 + pruebas nativas

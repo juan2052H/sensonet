@@ -8,3 +8,4 @@
 - [ADR 0006: Frontend: React + TypeScript + Vite](0006-react-vite.md)
 - [ADR 0007: Firmware: sketch de Arduino IDE (no PlatformIO) y QoS de PubSubClient](0007-firmware-arduino-ide.md)
 - [ADR 0008: Deduplicación por (nodo, ts, seq)](0008-deduplicacion.md)
+- [ADR 0009: Migración a Spring Boot 4 y Java 25](0009-spring-boot-4-java-25.md)
