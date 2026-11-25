@@ -2,7 +2,7 @@
 
 ## Viñeta para el CV
 
-**SensoNet: monitor IoT en tiempo real.** Diseñé y desarrollé un sistema de monitoreo con MQTT sobre TLS y control de acceso por dispositivo, backend en Spring Boot con motor de alertas con histéresis, PostgreSQL/TimescaleDB y dashboard en React con WebSocket. El firmware para ESP32 (C++, Arduino) tiene un buffer offline-first y la demo usa nodos simulados que siguen el mismo protocolo. Incluye 120+ pruebas automatizadas (unitarias, Testcontainers, Playwright) y CI con GitHub Actions.
+**SensoNet: monitor IoT en tiempo real.** Diseñé y desarrollé un sistema de monitoreo con MQTT sobre TLS y control de acceso por dispositivo, backend en Spring Boot con motor de alertas con histéresis, PostgreSQL/TimescaleDB y dashboard en React con WebSocket. El firmware para ESP32 (C++, Arduino) tiene un buffer offline-first y la demo usa nodos simulados que siguen el mismo protocolo. Incluye más de 90 pruebas automatizadas (unitarias, Testcontainers, Playwright) y CI con GitHub Actions.
 
 Formula la parte del hardware con honestidad mientras el nodo no esté construido: «firmware para ESP32 (compilado, demo con nodos simulados)». Si en una entrevista te preguntan por el hardware, cuenta qué está probado (la lógica pura y la compilación) y qué no (el nodo físico).
 

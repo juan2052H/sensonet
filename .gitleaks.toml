@@ -1,0 +1,10 @@
+# Reglas por defecto de gitleaks + excepciones para valores que NO son secretos reales.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Marcadores de .env.example y secreto fijo de las pruebas de integración"
+regexes = [
+  '''cambia-est[ae]-''',                 # plantillas de .env.example
+  '''secreto-de-pruebas-de-integracion''', # JWT de Testcontainers (solo pruebas)
+]
